@@ -57,14 +57,28 @@ from cloudinit.net.renderer import Renderer
 ALL_DISTROS = "all"
 
 OSFAMILIES = {
-    "alpine": ["alpine"],
-    "arch": ["arch"],
-    "debian": ["debian", "ubuntu"],
-    "freebsd": ["freebsd", "dragonfly"],
-    "gentoo": ["gentoo", "cos"],
-    "netbsd": ["netbsd"],
-    "openbsd": ["openbsd"],
+    "alpine": ["alpine"] | ["alpine"],
+    "arch": ["arch"] | ["arch"],
+    "debian": ["debian", "ubuntu"] | ["debian", "ubuntu"],
+    "freebsd": ["freebsd", "dragonfly"] | ["freebsd", "dragonfly"],
+    "gentoo": ["gentoo", "cos"] | ["gentoo", "cos"],
+    "netbsd": ["netbsd"] | ["netbsd"],
+    "openbsd": ["openbsd"] | ["openbsd"],
     "redhat": [
+        "almalinux",
+        "amazon",
+        "centos",
+        "cloudlinux",
+        "eurolinux",
+        "fedora",
+        "mariner",
+        "miraclelinux",
+        "openmandriva",
+        "photon",
+        "rhel",
+        "rocky",
+        "virtuozzo",
+    ] | [
         "almalinux",
         "amazon",
         "centos",
@@ -88,9 +102,18 @@ OSFAMILIES = {
         "sle-micro",
         "sles",
         "suse",
+    ] | [
+        "opensuse",
+        "opensuse-leap",
+        "opensuse-microos",
+        "opensuse-tumbleweed",
+        "sle_hpc",
+        "sle-micro",
+        "sles",
+        "suse",
     ],
-    "openeuler": ["openeuler"],
-    "OpenCloudOS": ["OpenCloudOS", "TencentOS"],
+    "openeuler": ["openeuler"] | ["openeuler"],
+    "OpenCloudOS": ["OpenCloudOS", "TencentOS"] | ["OpenCloudOS", "TencentOS"],
 }
 
 LOG = logging.getLogger(__name__)
