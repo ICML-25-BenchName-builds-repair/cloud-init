@@ -275,10 +275,10 @@ class TestDHCPRFC3442(CiTestCase):
 
 
 class TestDHCPParseStaticRoutes(CiTestCase):
-    with_logs = True
+    with_logs: bool = True
 
     def test_parse_static_routes_empty_string(self):
-        self.assertEqual([], IscDhclient.parse_static_routes(""))
+        self.assertEqual(IscDhclient.parse_static_routes(""), [])
 
     def test_parse_static_routes_invalid_input_returns_empty_list(self):
         rfc3442 = "32,169,254,169,254,130,56,248"
