@@ -112,11 +112,7 @@ LDH_ASCII_CHARS = string.ascii_letters + string.digits + "-"
 # This also isn't exhaustive. If you have a unique case that adheres to
 # the `packages` schema, you can add it here.
 PackageList = Union[
-    List[str],
-    List[Mapping],
-    List[List[str]],
-    List[Union[str, List[str]]],
-    List[Union[str, List[str], Mapping]],
+    List[str] | List[Mapping] | List[List[str]] | List[str | List[str]] | List[str | List[str] | Mapping],
 ]
 
 
