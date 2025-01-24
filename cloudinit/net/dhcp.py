@@ -177,7 +177,7 @@ class DhcpClient(abc.ABC):
 
     @classmethod
     def kill_dhcp_client(cls):
-        subp.subp(["pkill", cls.client_name], rcs=[0, 1])
+        subp.subp(["pkill", cls.client_name], rcs=[0, 1])[0]
 
     @classmethod
     def clear_leases(cls):
