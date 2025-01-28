@@ -329,7 +329,7 @@ class TestNetworkManagerActivatorBringUp:
     def fake_isfile_no_nmconn(filename):
         return False if filename.endswith(".nmconnection") else True
 
-    @patch("cloudinit.subp.subp", return_value=("", ""))
+    @patch("cloudinit.subp.subp", return_value=("output", ""))
     @patch(
         "cloudinit.net.network_manager.available_nm_ifcfg_rh",
         return_value=True,
@@ -340,7 +340,7 @@ class TestNetworkManagerActivatorBringUp:
         self, m_exists, m_isfile, m_plugin, m_subp
     ):
         """
-        There is no network manager connection file but ifcfg-rh plugin is
+        There is no NetworkManager connection file but ifcfg-rh plugin is
         present and ifcfg interface config files are also present. In this
         case, we should use ifcfg files.
         """
