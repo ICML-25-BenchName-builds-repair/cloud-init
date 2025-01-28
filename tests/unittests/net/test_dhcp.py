@@ -446,7 +446,7 @@ class TestDHCPDiscoveryClean(CiTestCase):
             "DHCP client not found: dhclient",
             self.logs.getvalue(),
         )
-        self.assertIn(
+        self.assertIn( 
            "DHCP client not found: dhcpcd",
            self.logs.getvalue(),
         )

@@ -574,8 +574,27 @@ class Dhcpcd:
         try:
             out, err = subp.subp(
                 [
-                    "dhcpcd",
-                    "--oneshot",  # get lease then exit
+                    "dhcpcd", 
+                    "--oneshot",  # get lease then exit 
+                    "--nobackground",  # don't fork
+                    "--ipv4only",  # only attempt configuring ipv4
+                    "--waitip=4",  # wait for ipv4 to be configured
+                    "--persistent",  # don't deconfigure when dhcpcd exits
+                    "--noarp",  # don't be slow
+                    interface,
+                ]
+            )
+            if dhcp_log_func is not None:
+                dhcp_log_func(out, err)
+        except subp.ProcessExecutionError as error:
+            LOG.debug(
+                "dhclient exited with code: %s stderr: %r stdout: %r",
+                error.exit_code,
+                error.stderr,
+                error.stdout,
+            )
+            raise NoDHCPLeaseError from error
+        return self.parse_dhcp_lease_file(interface)
                     "--nobackground",  # don't fork
                     "--ipv4only",  # only attempt configuring ipv4
                     "--waitip=4",  # wait for ipv4 to be configured
