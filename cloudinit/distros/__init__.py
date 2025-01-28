@@ -28,8 +28,8 @@ from typing import (
     Set,
     Tuple,
     Type,
-    Union,
 )
+from typing import Union as _Union
 
 import cloudinit.net.netops.iproute2 as iproute2
 from cloudinit import (
@@ -111,12 +111,12 @@ LDH_ASCII_CHARS = string.ascii_letters + string.digits + "-"
 # we need to distinguish between a str and a Sequence[str]
 # This also isn't exhaustive. If you have a unique case that adheres to
 # the `packages` schema, you can add it here.
-PackageList = Union[
+PackageList = _Union[
     List[str],
     List[Mapping],
     List[List[str]],
-    List[Union[str, List[str]]],
-    List[Union[str, List[str], Mapping]],
+    List[_Union[str, List[str]]],
+    List[_Union[str, List[str], Mapping]],
 ]
 
 
