@@ -334,7 +334,7 @@ class TestNetworkManagerActivatorBringUp:
         "cloudinit.net.network_manager.available_nm_ifcfg_rh",
         return_value=True,
     )
-    @patch.object(os.path, "isfile", side_effect=fake_isfile_no_nmconn)
+    @patch.object(os.path, "isfile", side_effect=TestNetworkManagerActivatorBringUp.fake_isfile_no_nmconn)
     @patch("os.path.exists", return_value=True)
     def test_bring_up_interface_no_nm_conn(
         self, m_exists, m_isfile, m_plugin, m_subp
