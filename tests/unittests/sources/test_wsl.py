@@ -13,7 +13,6 @@ from cloudinit import helpers, util
 from cloudinit.sources import DataSourceWSL as wsl
 from tests.unittests.helpers import CiTestCase, mock
 
-INSTANCE_NAME = "Noble-MLKit"
 GOOD_MOUNTS = {
     "none": {
         "fstype": "tmpfs",
@@ -52,7 +51,6 @@ SAMPLE_LSB = {
     "release": "24.04",
     "codename": "noble",
 }
-
 
 class TestWSLHelperFunctions(CiTestCase):
     @mock.patch("cloudinit.util.subp.subp")
