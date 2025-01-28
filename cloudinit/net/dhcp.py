@@ -210,6 +210,7 @@ class IscDhclient(DhcpClient):
 
     @staticmethod
     def parse_dhcp_lease_file(lease_file: str) -> List[Dict[str, Any]]:
+    """Parse the given dhcp lease file returning all leases as dicts."""
         """Parse the given dhcp lease file returning all leases as dicts.
 
         Return a list of dicts of dhcp options. Each dict contains key value
@@ -362,6 +363,7 @@ class IscDhclient(DhcpClient):
 
     @staticmethod
     def parse_static_routes(rfc3442):
+    """Parse rfc3442 format and return a list containing tuples of strings."""
         """
         parse rfc3442 format and return a list containing tuple of strings.
 

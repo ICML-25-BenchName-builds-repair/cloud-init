@@ -144,6 +144,7 @@ class TestParseDHCPLeasesFile(CiTestCase):
 
 class TestDHCPRFC3442(CiTestCase):
     def test_parse_lease_finds_rfc3442_classless_static_routes(self):
+    """IscDhclient.parse_dhcp_lease_file returns rfc3442-classless-static-routes."""
         """IscDhclient.parse_dhcp_lease_file returns
         rfc3442-classless-static-routes.
         """
@@ -333,6 +334,7 @@ class TestDHCPParseStaticRoutes(CiTestCase):
         )
 
     def test_parse_static_routes_logs_error_truncated(self):
+    """IscDhclient.parse_static_routes logs error when route is truncated."""
         bad_rfc3442 = {
             "class_c": "24,169,254,169,10",
             "class_b": "16,172,16,10",
