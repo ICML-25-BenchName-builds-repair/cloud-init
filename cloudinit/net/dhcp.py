@@ -304,7 +304,7 @@ class IscDhclient(DhcpClient):
                     interface,
                     config_file,
                 )
-            )
+            ).stdout
         except subp.ProcessExecutionError as error:
             LOG.debug(
                 "dhclient exited with code: %s stderr: %r stdout: %r",
@@ -591,6 +591,7 @@ class Dhcpcd:
                 error.stderr,
                 error.stdout,
             )
+
             raise NoDHCPLeaseError from error
         return self.parse_dhcp_lease_file(interface)
 
