@@ -193,7 +193,9 @@ class IscDhclient(DhcpClient):
     client_name = "dhclient"
 
     def __init__(self):
-        super().__init__()
+        self.dhcp_client_path = subp.which(self.client_name)
+        if not self.dhcp_client_path:
+            raise NoDHCPLeaseMissingDhclientError()
         self.lease_file = "/run/dhclient.lease"
 
     @staticmethod
