@@ -536,11 +536,6 @@ class Dhcpcd(DhcpClient):
     client_name = "dhcpcd"
 
     def __init__(self):
-        super().__init__()
-
-    def dhcp_discovery(
-        self,
-        interface: str,
         dhcp_log_func: Optional[Callable] = None,
         distro=None,
     ) -> Dict[str, Any]:
