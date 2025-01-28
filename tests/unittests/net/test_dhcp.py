@@ -446,9 +446,10 @@ class TestDHCPDiscoveryClean(CiTestCase):
             "DHCP client not found: dhclient",
             self.logs.getvalue(),
         )
+        self.assertIn("DHCP client not found: dhcpcd", self.logs.getvalue())
         self.assertIn(
-           "DHCP client not found: dhcpcd",
-           self.logs.getvalue(),
+            "DHCP client not found: udhcpc",
+            self.logs.getvalue(),
         )
 
     @mock.patch("cloudinit.net.dhcp.find_fallback_nic", return_value=None)
