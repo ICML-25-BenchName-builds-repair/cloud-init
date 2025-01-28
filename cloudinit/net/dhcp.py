@@ -572,7 +572,7 @@ class Dhcpcd:
         # /lib/dhcpcd/dhcpcd-hooks/ and pass each of those with the --nohook
         # argument to dhcpcd
         try:
-            out, err = subp.subp(
+            subp.subp(
                 [
                     "dhcpcd",
                     "--oneshot",  # get lease then exit
