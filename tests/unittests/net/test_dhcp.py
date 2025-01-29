@@ -3,6 +3,7 @@
 import os
 import signal
 from textwrap import dedent
+from pathlib import Path
 
 import pytest
 import responses
@@ -716,6 +717,83 @@ class TestDHCPDiscoveryClean(CiTestCase):
             "/tmp/ib0-dhclient.conf",
             'interface "ib0" {send dhcp-client-identifier '
             "20:AA:AA:AA:00:00:AA:AA:AA;}",
+        )
+
+    @mock.patch("cloudinit.temp_utils.get_tmp_ancestor", return_value="/tmp")
+    @mock.patch("cloudinit.util.write_file")
+    @mock.patch("cloudinit.net.dhcp.is_ib_interface", return_value=False)
+    @mock.patch("cloudinit.net.dhcp.os.remove")
+    @mock.patch("cloudinit.net.dhcp.util.get_proc_ppid", return_value=1)
+    @mock.patch("cloudinit.net.dhcp.os.kill", return_value=True)
+    @mock.patch("cloudinit.net.dhcp.subp.which", return_value="/usr/bin/dhcpcd")
+    @mock.patch("cloudinit.net.dhcp.subp.subp")
+    @mock.patch("cloudinit.util.wait_for_files", return_value=False)
+    def test_dhcp_discovery_dhcpcd(
+        self,
+        m_wait,
+        m_subp,
+        m_which,
+        m_kill,
+        m_getppid,
+        m_remove,
+        m_is_ib_interface,
+        mocked_write_file,
+        mocked_get_tmp_ancestor,
+    ):
+        """dhcp_discovery with dhcpcd brings up the interface and runs dhcpcd.
+
+        It also returns the parsed dhcp leases file.
+        """
+        dhcpcd_stdout = dedent(
+            """\
+            broadcast_address='192.168.15.255'
+            dhcp_lease_time='3600'
+            dhcp_message_type='5'
+            dhcp_server_identifier='192.168.0.1'
+            domain_name='us-east-2.compute.internal'
+            domain_name_servers='192.168.0.2'
+            host_name='ip-192-168-0-212'
+            interface_mtu='9001'
+            ip_address='192.168.0.212'
+            network_number='192.168.0.0'
+            routers='192.168.0.1'
+            subnet_cidr='20'
+            subnet_mask='255.255.240.0'
+        """
+        )
+        m_subp.return_value = (dhcpcd_stdout, "")
+        self.assertCountEqual(
+            [
+                {
+                    "interface": "eth9",
+                    "fixed-address": "192.168.0.212",
+                    "subnet-mask": "255.255.240.0",
+                    "routers": "192.168.0.1",
+                    "domain-name": "us-east-2.compute.internal", 
+                    "dhcp-server-identifier": "192.168.0.1",
+                    "dhcp-lease-time": "3600",
+                    "domain-name-servers": "192.168.0.2",
+                    "host-name": "ip-192-168-0-212",
+                    "interface-mtu": "9001",
+                    "broadcast-address": "192.168.15.255",
+                }
+            ],
+            Dhcpcd().dhcp_discovery("eth9", distro=MockDistro()),
+        )
+        # Interface was brought up before dhcpcd called
+        m_subp.assert_has_calls(
+            [
+                mock.call(
+                    ["ip", "link", "set", "dev", "eth9", "up"],
+                ),
+                mock.call(
+                    [
+                         "dhcpcd", "--oneshot", "--nobackground", "--ipv4only",
+                         "--waitip=4", "--persistent", "--noarp", "--config",
+                         "/tmp/eth9-dhcpcd.conf", "eth9",
+                    ],
+                ),
+            ]
         )
 
     @mock.patch("cloudinit.net.dhcp.os.remove")

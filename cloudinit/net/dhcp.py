@@ -278,6 +278,94 @@ class IscDhclient(DhcpClient):
         # the link up before attempting discovery. Since we are using
         # -sf /bin/true, we need to do that "link up" ourselves first.
         distro.net_ops.link_up(interface)
+
+        interface_dhcpcd_content = dedent(f"""\
+            interface {interface}
+            hostname
+            noipv4ll
+            timeout 30
+            require dhcp_server_identifier
+            option netbios_name_servers
+            option classless_static_routes
+            """)        
+
+        tmp_dir = temp_utils.get_tmp_ancestor(needs_exe=True)
+        config_file = os.path.join(tmp_dir, interface + "-dhcpcd.conf")
+        util.write_file(config_file, interface_dhcpcd_content)
+
+        try:
+            out, err = subp.subp(
+                [
+                    "dhcpcd",
+                    "--oneshot",  # get lease then exit
+                    "--nobackground",  # don't fork
+                    "--ipv4only",  # only attempt configuring ipv4
+                    "--waitip=4",  # wait for ipv4 to be configured
+                    "--persistent",  # don't deconfigure when dhcpcd exits
+                    "--noarp",  # don't be slow
+                    "--config",  # custom config file
+                    config_file,
+                    interface,
+                ]
+            )
+        except subp.ProcessExecutionError as error:
+            LOG.debug(
+                "dhcpcd exited with code: %s stderr: %r stdout: %r",
+                error.exit_code,
+                error.stderr,
+                error.stdout,
+            )
+            raise NoDHCPLeaseError from error
+
+        return self.parse_dhcpcd_lease(out, interface)
+
+    @staticmethod
+    def parse_dhcpcd_lease(lease_dump: str, interface: str) -> List[dict]:
+        """parse the output of dhcpcd --dump
+
+        map names to the datastructure we create from dhclient
+
+        example dhcpcd output:
+
+        broadcast_address='192.168.15.255'
+        dhcp_lease_time='3600'
+        dhcp_message_type='5'
+        dhcp_server_identifier='192.168.0.1'
+        domain_name='us-east-2.compute.internal'
+        domain_name_servers='192.168.0.2'
+        host_name='ip-192-168-0-212'
+        interface_mtu='9001'
+        ip_address='192.168.0.212'
+        network_number='192.168.0.0'
+        routers='192.168.0.1'
+        subnet_cidr='20'
+        subnet_mask='255.255.240.0'
+        """
+        # create a dict from dhcpcd dump output
+        lease = dict(
+            [a.split("=") for a in lease_dump.replace("'", "").split()]
+        )
+        # Convert option names to standard dhclient names
+        dhcpcd_to_dhclient = {
+            "interface_mtu": "interface-mtu",
+            "subnet_cidr": "subnet-cidr",
+            "subnet_mask": "subnet-mask",
+            "ip_address": "fixed-address",
+            "network_number": "network-number",
+            "dhcp_server_identifier": "dhcp-server-identifier",
+            "dhcp_lease_time": "dhcp-lease-time",
+            "dhcp_message_type": "dhcp-message-type",
+            "domain_name": "domain-name",
+            "domain_name_servers": "domain-name-servers",
+            "host_name": "host-name",
+            "broadcast_address": "broadcast-address",
+            "routers": "routers",
+        }
+        for dhcpcd_name, dhclient_name in dhcpcd_to_dhclient.items():
+            if dhcpcd_name in lease:
+                lease[dhclient_name] = lease.pop(dhcpcd_name)
+        lease["interface"] = interface
+        return [lease]
         # For INFINIBAND port the dhlient must be sent with
         # dhcp-client-identifier. So here we are checking if the interface is
         # INFINIBAND or not. If yes, we are generating the the client-id to be
