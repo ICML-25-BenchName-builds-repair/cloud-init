@@ -390,6 +390,7 @@ class TestDHCPParseStaticRoutes(CiTestCase):
 
 
 class TestDHCPDiscoveryClean(CiTestCase):
+    """Test parsing of dhcp lease files."""
     with_logs = True
     ib_address_prefix = "00:00:00:00:00:00:00:00:00:00:00:00"
 
@@ -972,6 +973,7 @@ class TestEphemeralDhcpLeaseErrors:
 
 
 class TestUDHCPCDiscoveryClean(CiTestCase):
+    """Test parsing of udhcpc lease files."""
     with_logs = True
     maxDiff = None
 
@@ -1081,6 +1083,7 @@ class TestUDHCPCDiscoveryClean(CiTestCase):
         m_get_ib_interface_hwaddr,
         m_is_ib_interface,
     ):
+        """Test dhcp_discovery for ib interfaces."""
         """dhcp_discovery runs udcpc and parse the dhcp leases."""
         m_subp.return_value = ("", "")
         m_loadjson.return_value = {
