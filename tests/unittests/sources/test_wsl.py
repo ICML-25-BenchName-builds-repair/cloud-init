@@ -11,7 +11,7 @@ from typing import Optional, cast
 
 from cloudinit import helpers, util
 from cloudinit.sources import DataSourceWSL as wsl
-from tests.unittests.helpers import CiTestCase, mock
+from tests.unittests.helpers import CiTestCase, mock, Optional
 
 INSTANCE_NAME = "Noble-MLKit"
 GOOD_MOUNTS = {
