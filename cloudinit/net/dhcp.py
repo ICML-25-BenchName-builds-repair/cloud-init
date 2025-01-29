@@ -111,6 +111,24 @@ def maybe_perform_dhcp_discovery(distro, nic=None, dhcp_log_func=None):
     return distro.dhcp_client.dhcp_discovery(nic, dhcp_log_func, distro)
 
 
+def validate_lease_data(lease):
+    """Validate required fields in DHCP lease data.
+    
+    Returns True if valid, False otherwise.
+    """
+    required_fields = [
+        'interface', 
+        'fixed-address',
+        'subnet-mask'
+    ]
+    
+    # Check that required fields exist and have values
+    if not all(field in lease and lease[field] for field in required_fields):
+        LOG.warning("Missing required DHCP lease fields: %s", required_fields)
+        return False
+    return True
+
+
 def networkd_parse_lease(content):
     """Parse a systemd lease file content as in /run/systemd/netif/leases/
 
