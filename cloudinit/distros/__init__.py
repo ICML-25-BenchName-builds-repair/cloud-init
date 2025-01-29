@@ -176,8 +176,8 @@ class Distro(persistence.CloudInitPickleMixin, metaclass=abc.ABCMeta):
         if "networking" not in self.__dict__ or not self.networking.__dict__:
             # This is either a Distro pickle with no networking attribute OR
             # this is a Distro pickle with a networking attribute but from
-            # before ``Networking`` had any state (meaning that
-            # Networking.__setstate__ will not be called).  In either case, we
+            # before ``Networking`` had any state (meaning that  # noqa
+            # will not be called). In either case, we
             # want to ensure that `self.networking` is freshly-instantiated:
             # either because it isn't present at all, or because it will be
             # missing expected instance state otherwise.
@@ -190,8 +190,8 @@ class Distro(persistence.CloudInitPickleMixin, metaclass=abc.ABCMeta):
             if len(entry) == 2:
                 return tuple(entry)
         raise ValueError(
-            "Invalid 'packages' yaml specification. "
-            "Check schema definition."
+            "Invalid 'packages' yaml specification. "  # noqa
+            "Check schema definition.    "
         )
 
     def _extract_package_by_manager(
