@@ -1140,7 +1140,7 @@ class Distro(persistence.CloudInitPickleMixin, metaclass=abc.ABCMeta):
 
     @classmethod
     def reload_init(cls, rcs=None):
-        """
+        """Reload init.
         Reload systemd startup daemon.
         May raise ProcessExecutionError
         """
