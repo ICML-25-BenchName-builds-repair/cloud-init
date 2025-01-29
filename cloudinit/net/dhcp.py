@@ -305,12 +305,12 @@ class IscDhclient(DhcpClient):
                     config_file,
                 )
             )
-        except subp.ProcessExecutionError as error:
-            LOG.debug(
+        except subp.ProcessExecutionError as e:
+            LOG.warning(
                 "dhclient exited with code: %s stderr: %r stdout: %r",
-                error.exit_code,
-                error.stderr,
-                error.stdout,
+                e.exit_code,
+                e.stderr,
+                e.stdout,
             )
             raise NoDHCPLeaseError from error
 
