@@ -150,7 +150,12 @@ def networkd_get_option_from_leases(keyname, leases_d=None):
             return data[keyname]
     return None
 
-
+class IscDhclientLeaseParseError(Exception):
+    """Raised when unable to parse isc_dhclient lease file content."""
+    def __init__(self, lease_file, reason):
+        self.lease_file = lease_file
+        self.reason = reason
+    
 class DhcpClient(abc.ABC):
     client_name = ""
     max_wait = 5
