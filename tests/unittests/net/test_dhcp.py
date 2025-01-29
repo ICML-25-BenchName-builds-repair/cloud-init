@@ -960,7 +960,9 @@ class TestEphemeralDhcpLeaseErrors:
         assert len(m_dhcp.mock_calls) == 1
 
     @mock.patch("cloudinit.net.ephemeral.maybe_perform_dhcp_discovery")
-    def test_ctx_mgr_umbrella_error(self, m_dhcp, error_class):
+    def test_ctx_mgr_umbrella_error(
+        self, m_dhcp, error_class
+    ):
         m_dhcp.side_effect = [error_class()]
         with pytest.raises(NoDHCPLeaseError):
             with EphemeralDHCPv4(
