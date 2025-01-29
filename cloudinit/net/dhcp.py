@@ -673,12 +673,21 @@ class Udhcpc(DhcpClient):
             LOG.debug("Skip udhcpc configuration: No udhcpc command found.")
             raise NoDHCPLeaseMissingUdhcpcError()
 
+    def validate_inputs(self, interface, dhcp_log_func):
+        if not isinstance(interface, str):
+            raise TypeError("interface must be a string")
+        if dhcp_log_func is not None and not callable(dhcp_log_func):
+            raise TypeError("dhcp_log_func must be callable or None")
+
     def dhcp_discovery(
         self,
         interface,
         dhcp_log_func=None,
         distro=None,
+        max_attempts=3,
     ):
+        self.validate_inputs(interface, dhcp_log_func)
+
         """Run udhcpc on the interface without scripts or filesystem artifacts.
 
         @param interface: Name of the network interface on which to run udhcpc.
