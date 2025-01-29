@@ -66,7 +66,7 @@ OSFAMILIES = {
     "openbsd": ["openbsd"],
     "redhat": [
         "almalinux",
-        "amazon",
+        "amazon",  # type: ignore
         "centos",
         "cloudlinux",
         "eurolinux",
@@ -77,7 +77,7 @@ OSFAMILIES = {
         "photon",
         "rhel",
         "rocky",
-        "virtuozzo",
+        "virtuozzo",  # type: ignore
     ],
     "suse": [
         "opensuse",
