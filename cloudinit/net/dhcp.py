@@ -156,7 +156,6 @@ class DhcpClient(abc.ABC):
     max_wait = 5
 
     def __init__(self):
-        self.dhcp_client_path = subp.which(self.client_name)
         if not self.dhcp_client_path:
             raise NoDHCPLeaseMissingDhclientError()
 
