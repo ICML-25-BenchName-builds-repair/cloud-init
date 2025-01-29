@@ -540,6 +540,88 @@ class Dhcpcd:
         self.dhclient_path = subp.which("dhcpcd")
         if not self.dhclient_path:
             LOG.debug(
+                "Skip dhcpcd configuration: No dhcpcd command found."
+            )
+            raise NoDHCPLeaseMissingUdhcpcError()
+
+    @staticmethod
+    def parse_dhcpcd_lease(lease_dump: str, interface: str) -> List[dict]:
+        """parse the output of dhcpcd --dump
+
+        map names to the datastructure we create from dhclient
+
+        example dhcpcd output:
+
+        broadcast_address='192.168.15.255'
+        dhcp_lease_time='3600'
+        dhcp_message_type='5'
+        dhcp_server_identifier='192.168.0.1'
+        domain_name='us-east-2.compute.internal'
+        domain_name_servers='192.168.0.2'
+        host_name='ip-192-168-0-212'
+        interface_mtu='9001'
+        ip_address='192.168.0.212'
+        network_number='192.168.0.0'
+        routers='192.168.0.1'
+        subnet_cidr='20'
+        subnet_mask='255.255.240.0'
+        """
+
+        # create a dict from dhcpcd dump output
+        lease = dict(
+            [a.split("=") for a in lease_dump.replace("'", "").split()]
+        )
+
+        return [{
+            "interface": interface,
+            "fixed-address": lease.get("ip_address"),
+            "subnet-mask": lease.get("subnet_mask"),
+            "routers": lease.get("routers"),
+            "domain-name-servers": lease.get("domain_name_servers"),
+            "host-name": lease.get("host_name"),
+        }]
+
+    def dhcp_discovery(
+        self,
+        interface,
+        dhcp_log_func=None,
+        distro=None,
+    ):
+        """Run dhcpcd on the interface without scripts/filesystem artifacts.
+
+        @param interface: Name of the network interface on which to dhcpcd.
+        @param dhcp_log_func: A callable accepting the dhcpcd output and err streams. 
+
+        @return: A list of dicts of representing the dhcp leases parsed from
+            the dhcpcd output or empty list.
+        """
+        LOG.debug("Performing a dhcp discovery on %s", interface)
+
+        # TODO: disabling hooks means we need to get all of the files in
+        # /lib/dhcpcd/dhcpcd-hooks/ and pass each of those with the --nohook
+        # argument to dhcpcd
+        try:
+            out, err = subp.subp(
+                [
+                    "dhcpcd",
+                    "--oneshot",  # get lease then exit
+                    "--nobackground",  # don't fork
+                    "--ipv4only",  # only attempt configuring ipv4
+                    "--waitip=4",  # wait for ipv4 to be configured
+                    "--persistent",  # don't deconfigure when dhcpcd exits
+                    "--noarp",  # don't be slow
+                    interface,
+                ]
+            )
+        except subp.ProcessExecutionError as error:
+            LOG.debug(
+                "dhcpcd exited with code: %s stderr: %r stdout: %r",
+                error.exit_code,
+                error.stderr,
+                error.stdout,
+            )
+            raise NoDHCPLeaseError from error
+        return self.parse_dhcpcd_lease(out, interface)
                 "Skip dhclient configuration: No dhclient command found."
             )
             raise NoDHCPLeaseMissingDhclientError()
