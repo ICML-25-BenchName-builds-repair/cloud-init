@@ -304,7 +304,7 @@ class IscDhclient(DhcpClient):
                     interface,
                     config_file,
                 )
-            )
+            ).stdout
         except subp.ProcessExecutionError as error:
             LOG.debug(
                 "dhclient exited with code: %s stderr: %r stdout: %r",
@@ -642,15 +642,8 @@ class Dhcpcd:
             content.
         """
         try:
-            return cls.parse_dhcpcd_lease(
-                subp.subp(
-                    [
-                        "dhcpcd",
-                        "--dumplease",
-                        interface,
-                    ],
-                    rcs=[0, 1],
-                ).stdout,
+            lease_dump = subp.subp(["dhcpcd", "--dumplease", interface])[0]
+            return cls.parse_dhcpcd_lease(lease_dump,
                 interface,
             )
 
