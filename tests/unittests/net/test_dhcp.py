@@ -403,7 +403,7 @@ class TestDHCPDiscoveryClean(CiTestCase):
 
         self.assertIn(
             "Skip dhcp_discovery: Unable to find fallback nic.",
-            self.logs.getvalue(),
+             self.logs.getvalue(),
         )
 
     @mock.patch("cloudinit.net.dhcp.find_fallback_nic", return_value="eth9")
