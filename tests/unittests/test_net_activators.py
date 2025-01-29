@@ -330,8 +330,8 @@ class TestNetworkManagerActivatorBringUp:
         return False if filename.endswith(".nmconnection") else True
 
     @patch("cloudinit.subp.subp", return_value=("", ""))
-    @patch(
-        "cloudinit.net.network_manager.available_nm_ifcfg_rh",
+    @patch.object(
+        NetworkManagerActivator, "available_nm_ifcfg_rh",
         return_value=True,
     )
     @patch.object(os.path, "isfile", side_effect=fake_isfile_no_nmconn)
@@ -384,8 +384,8 @@ class TestNetworkManagerActivatorBringUp:
             index += 1
 
     @patch("cloudinit.subp.subp", return_value=("", ""))
-    @patch(
-        "cloudinit.net.network_manager.available_nm_ifcfg_rh",
+    @patch.object(
+        NetworkManagerActivator, "available_nm_ifcfg_rh",
         return_value=False,
     )
     @patch.object(os.path, "isfile", side_effect=fake_isfile_no_nmconn)
@@ -401,8 +401,8 @@ class TestNetworkManagerActivatorBringUp:
         assert not NetworkManagerActivator.bring_up_interface("eth0")
 
     @patch("cloudinit.subp.subp", return_value=("", ""))
-    @patch(
-        "cloudinit.net.network_manager.available_nm_ifcfg_rh",
+    @patch.object(
+        NetworkManagerActivator, "available_nm_ifcfg_rh",
         return_value=True,
     )
     @patch("os.path.isfile", return_value=False)
