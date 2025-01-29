@@ -295,24 +295,27 @@ class IscDhclient(DhcpClient):
             config_file = os.path.join(tmp_dir, interface + "-dhclient.conf")
             util.write_file(config_file, interface_dhclient_content)
 
-        try:
-            out, err = subp.subp(
-                distro.build_dhclient_cmd(
-                    self.dhclient_path,
-                    lease_file,
-                    pid_file,
-                    interface,
-                    config_file,
+        attempts = 0
+        max_attempts = 3
+        while attempts < max_attempts:
+            try:
+                out, err = subp.subp(
+                    distro.build_dhclient_cmd(
+                        self.dhclient_path,
+                        lease_file,
+                        pid_file,
+                        interface,
+                        config_file,
+                    )
                 )
-            )
-        except subp.ProcessExecutionError as error:
-            LOG.debug(
-                "dhclient exited with code: %s stderr: %r stdout: %r",
-                error.exit_code,
-                error.stderr,
-                error.stdout,
-            )
-            raise NoDHCPLeaseError from error
+                break  # Break on success
+            except subp.ProcessExecutionError as error:
+                attempts += 1
+                if attempts == max_attempts:
+                    raise NoDHCPLeaseError from error
+                else:
+                    LOG.debug("dhclient attempt %s failed. stderr: %s, stdout: %s", attempts, error.stderr, error.stdout)
+
 
         # Wait for pid file and lease file to appear, and for the process
         # named by the pid file to daemonize (have pid 1 as its parent). If we
