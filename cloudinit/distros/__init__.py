@@ -144,7 +144,7 @@ class Distro(persistence.CloudInitPickleMixin, metaclass=abc.ABCMeta):
 
     _ci_pkl_version = 1
     prefer_fqdn = False
-    resolve_conf_fn = "/etc/resolv.conf"
+    resolve_conf_fn: Optional[str] = "/etc/resolv.conf"
 
     osfamily: str
     dhcp_client_priority = [dhcp.IscDhclient, dhcp.Dhcpcd, dhcp.Udhcpc]
@@ -155,7 +155,7 @@ class Distro(persistence.CloudInitPickleMixin, metaclass=abc.ABCMeta):
     # A regex to match DHCP lease file(s)
     # The children classes should override this with a regex matching
     # their lease file name format
-    dhclient_lease_file_regex: str | None = None
+    dhclient_lease_file_regex: Optional[str] = None
 
     def __init__(self, name, cfg, paths):
         self._paths = paths
