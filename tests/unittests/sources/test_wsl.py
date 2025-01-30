@@ -196,7 +196,7 @@ class TestWSLDataSource(CiTestCase):
 
     @mock.patch("cloudinit.util.wait_for_files")
     @mock.patch("cloudinit.util.load_file")
-    @mock.patch("cloudinit.sources.DataSourceWSL.instance_name")
+    @mock.patch("cloudinit.sources.DataSourceWSL.instance_name") 
     @mock.patch("cloudinit.sources.DataSourceWSL.win_user_profile_dir")
     def test_metadata_id(self, m_prof_dir, m_iname, m_load_file, m_wait_file):
         """
@@ -222,7 +222,7 @@ class TestWSLDataSource(CiTestCase):
         )
 
     @mock.patch("cloudinit.util.lsb_release")
-    @mock.patch("cloudinit.sources.DataSourceWSL.instance_name")
+    @mock.patch("cloudinit.sources.DataSourceWSL.instance_name") 
     @mock.patch("cloudinit.sources.DataSourceWSL.win_user_profile_dir")
     def test_get_data_cc(self, m_prof_dir, m_iname, m_lsb):
         m_lsb.return_value = SAMPLE_LSB
