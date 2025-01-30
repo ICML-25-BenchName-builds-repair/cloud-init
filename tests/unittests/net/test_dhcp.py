@@ -1018,6 +1018,8 @@ class TestUDHCPCDiscoveryClean(CiTestCase):
             "subnet-mask": "255.255.255.0",
             "routers": "192.168.2.1",
             "static_routes": "10.240.0.1/32 0.0.0.0 0.0.0.0/0 10.240.0.1",
+        },
+        {
         }
         self.assertEqual(
             [
@@ -1026,6 +1028,7 @@ class TestUDHCPCDiscoveryClean(CiTestCase):
                     "interface": "eth9",
                     "routers": "192.168.2.1",
                     "static_routes": [
+                        ("10.240.0.1/32", "0.0.0.0"),
                         ("10.240.0.1/32", "0.0.0.0"),
                         ("0.0.0.0/0", "10.240.0.1"),
                     ],
