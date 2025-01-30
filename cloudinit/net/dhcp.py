@@ -12,6 +12,7 @@ import re
 import signal
 import time
 from contextlib import suppress
+from dataclasses import dataclass
 from io import StringIO
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
@@ -195,6 +196,8 @@ class IscDhclient(DhcpClient):
     def __init__(self):
         super().__init__()
         self.lease_file = "/run/dhclient.lease"
+        self.config = self.ClientConfig()
+        self.config.retry_limit = 3
 
     @staticmethod
     def parse_leases(lease_content: str) -> List[Dict[str, Any]]:
@@ -308,11 +311,7 @@ class IscDhclient(DhcpClient):
                 error.stderr,
                 error.stdout,
             )
-            raise NoDHCPLeaseError from error
-
-        # Wait for pid file and lease file to appear, and for the process
-        # named by the pid file to daemonize (have pid 1 as its parent). If we
-        # try to read the lease file before daemonization happens, we might try
+            return {}
         # to read it before the dhclient has actually written it. We also have
         # to wait until the dhclient has become a daemon so we can be sure to
         # kill the correct process, thus freeing cleandir to be deleted back
@@ -354,6 +353,7 @@ class IscDhclient(DhcpClient):
                 0.01 * 1000,
             )
         if dhcp_log_func is not None:
+        LOG.debug("Dhclient response on %s: %s", interface, out)
             dhcp_log_func(out, err)
         lease = self.get_newest_lease(distro)
         if lease:
