@@ -130,7 +130,7 @@ class Distro(persistence.CloudInitPickleMixin, metaclass=abc.ABCMeta):
     hosts_fn = "/etc/hosts"
     doas_fn = "/etc/doas.conf"
     ci_sudoers_fn = "/etc/sudoers.d/90-cloud-init-users"
-    hostname_conf_fn = "/etc/hostname"
+    hostname_conf_fn = "/etc/hostname"    # type: str | Sequence[str]
     tz_zone_dir = "/usr/share/zoneinfo"
     default_owner = "root:root"
     init_cmd = ["service"]  # systemctl, service etc
@@ -139,7 +139,7 @@ class Distro(persistence.CloudInitPickleMixin, metaclass=abc.ABCMeta):
     networking_cls: Type[Networking] = LinuxNetworking
     # This is used by self.shutdown_command(), and can be overridden in
     # subclasses
-    shutdown_options_map = {"halt": "-H", "poweroff": "-P", "reboot": "-r"}
+    shutdown_options_map: Dict[str, str] = {"halt": "-H", "poweroff": "-P", "reboot": "-r"}
     net_ops = iproute2.Iproute2
 
     _ci_pkl_version = 1
