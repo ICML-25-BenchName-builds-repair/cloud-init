@@ -997,6 +997,7 @@ class TestUDHCPCDiscoveryClean(CiTestCase):
     @mock.patch("cloudinit.net.dhcp.subp.which", return_value="/sbin/udhcpc")
     @mock.patch("cloudinit.net.dhcp.os.remove")
     @mock.patch("cloudinit.net.dhcp.subp.subp")
+    @mock.patch("cloudinit.temp_utils.get_tmp_ancestor", return_value="/var/tmp")
     @mock.patch("cloudinit.util.load_json")
     @mock.patch("cloudinit.util.load_file")
     @mock.patch("cloudinit.util.write_file")
@@ -1004,6 +1005,7 @@ class TestUDHCPCDiscoveryClean(CiTestCase):
         self,
         m_write_file,
         m_load_file,
+        m_get_tmp_ancestor,
         m_loadjson,
         m_subp,
         m_remove,
