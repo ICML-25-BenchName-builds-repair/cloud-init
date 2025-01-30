@@ -237,6 +237,50 @@ class IscDhclient(DhcpClient):
                 dhcp_leases = self.parse_leases(content)
                 if dhcp_leases:
                     return dhcp_leases[-1]
+
+    def dhcp_discovery(
+        self,
+        interface: str,
+        dhcp_log_func: Optional[Callable] = None,
+        distro=None,
+    ) -> Dict[str, Any]:
+        """Run dhcpcd on the interface without scripts/filesystem artifacts.
+
+        Overrides the default config file with self.override_config_file
+        to avoid running unwanted scripts.
+        """
+        if self.override_config_file:
+            conf_arg = ["-f", self.override_config_file]
+        else:
+            conf_arg = []
+        try:
+            out, err = subp.subp(
+                [
+                    self.client_name,
+                    "--oneshot",  # get lease then exit
+                    "--nobackground",  # don't fork
+                    "--ipv4only",  # only attempt configuring ipv4
+                    "--waitip=4",  # wait for ipv4 to be configured
+                    "--persistent",  # don't deconfigure when dhcpcd exits
+                    "--noarp",  # don't be slow
+                    *conf_arg, # config override if present
+                    interface,
+                ]
+            )
+            if dhcp_log_func is not None:
+                dhcp_log_func(out, err)
+            lease = self.get_newest_lease(distro)
+            if lease:
+                return lease
+            raise NoDHCPLeaseError("No lease found")
+        except subp.ProcessExecutionError as error:
+            LOG.debug(
+                "dhclient exited with code: %s stderr: %r stdout: %r",
+                error.exit_code,
+                error.stderr,
+                error.stdout,
+            )
+            raise NoDHCPLeaseError from error
         return {}
 
     def dhcp_discovery(
