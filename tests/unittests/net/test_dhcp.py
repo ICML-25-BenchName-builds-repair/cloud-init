@@ -390,7 +390,7 @@ class TestDHCPParseStaticRoutes(CiTestCase):
 
 
 class TestDHCPDiscoveryClean(CiTestCase):
-    with_logs = True
+    with_logs = True  # Make logs available for test
     ib_address_prefix = "00:00:00:00:00:00:00:00:00:00:00:00"
 
     @mock.patch("cloudinit.net.dhcp.find_fallback_nic")
@@ -1007,7 +1007,6 @@ class TestUDHCPCDiscoveryClean(CiTestCase):
         m_loadjson,
         m_subp,
         m_remove,
-        m_which,
         mocked_is_ib_interface,
     ):
         """dhcp_discovery runs udcpc and parse the dhcp leases."""
@@ -1061,7 +1060,6 @@ class TestUDHCPCDiscoveryClean(CiTestCase):
                 ),
             ]
         )
-
     @mock.patch("cloudinit.net.dhcp.is_ib_interface", return_value=True)
     @mock.patch("cloudinit.net.dhcp.get_ib_interface_hwaddr")
     @mock.patch("cloudinit.net.dhcp.subp.which", return_value="/sbin/udhcpc")
@@ -1077,7 +1075,6 @@ class TestUDHCPCDiscoveryClean(CiTestCase):
         m_loadjson,
         m_subp,
         m_remove,
-        m_which,
         m_get_ib_interface_hwaddr,
         m_is_ib_interface,
     ):
