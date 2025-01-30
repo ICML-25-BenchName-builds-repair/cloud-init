@@ -111,7 +111,7 @@ LDH_ASCII_CHARS = string.ascii_letters + string.digits + "-"
 # we need to distinguish between a str and a Sequence[str]
 # This also isn't exhaustive. If you have a unique case that adheres to
 # the `packages` schema, you can add it here.
-PackageList = Union[
+PackageList = Union[  # type: ignore[misc]
     List[str],
     List[Mapping],
     List[List[str]],
