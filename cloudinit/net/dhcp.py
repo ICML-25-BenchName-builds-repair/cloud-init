@@ -538,6 +538,13 @@ class Dhcpcd(DhcpClient):
     def __init__(self):
         super().__init__()
 
+    def get_newest_lease(self, distro) -> Dict[str, Any]:
+        """Return a lease
+
+        Return a dict of dhcp options.
+        """
+        return {}
+
     def dhcp_discovery(
         self,
         interface: str,
