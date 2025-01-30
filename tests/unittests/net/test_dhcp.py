@@ -572,11 +572,15 @@ class TestDHCPDiscoveryClean(CiTestCase):
         m_remove,
         mocked_is_ib_interface,
     ):
-        """dhcp_discovery brings up the interface and runs dhclient.
-
-        It also returns the parsed dhcp.leases file.
-        """
+        """dhcp_discovery brings up the interface and runs dhclient."""
         m_subp.return_value = ("", "")
+        m_wait.return_value = []  # Indicate pid and lease files are present
+
+        pid_content = 1234  
+        m_getppid.return_value = 1  # Indicate PID 1234 daemonized
+        m_load_file.return_value = str(pid_content)
+
+        lease_content = dedent(
         lease_content = dedent(
             """
             lease {
@@ -587,17 +591,16 @@ class TestDHCPDiscoveryClean(CiTestCase):
             }
         """
         )
-        my_pid = 1
-        m_getppid.return_value = 1  # Indicate that dhclient has daemonized
-
+        )
+        
         with mock.patch(
             "cloudinit.util.load_file", side_effect=["1", lease_content]
         ):
             self.assertCountEqual(
                 [
                     {
-                        "interface": "eth9",
                         "fixed-address": "192.168.2.74",
+                        "interface": "eth9",   
                         "subnet-mask": "255.255.255.0",
                         "routers": "192.168.2.1",
                     }
@@ -626,7 +629,7 @@ class TestDHCPDiscoveryClean(CiTestCase):
                 ),
             ]
         )
-        m_kill.assert_has_calls([mock.call(my_pid, signal.SIGKILL)])
+        m_kill.assert_has_calls([mock.call(pid_content, signal.SIGKILL)])
         mocked_is_ib_interface.assert_called_once_with("eth9")
 
     @mock.patch("cloudinit.temp_utils.get_tmp_ancestor", return_value="/tmp")
