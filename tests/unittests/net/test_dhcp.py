@@ -887,7 +887,7 @@ class TestEphemeralDhcpNoNetworkSetup(ResponsesTestCase):
         with EphemeralDHCPv4(
             MockDistro(),
             connectivity_url_data={"url": url},
-        ) as lease:
+        )as lease:
             self.assertIsNone(lease)
         # Ensure that no teardown happens:
         m_dhcp.assert_not_called()

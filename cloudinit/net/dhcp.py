@@ -571,19 +571,22 @@ class Dhcpcd:
         # TODO: disabling hooks means we need to get all of the files in
         # /lib/dhcpcd/dhcpcd-hooks/ and pass each of those with the --nohook
         # argument to dhcpcd
+        # Run dhcpcd and capture out, err, then call dhcp_log_func if set.
         try:
             out, err = subp.subp(
                 [
                     "dhcpcd",
-                    "--oneshot",  # get lease then exit
-                    "--nobackground",  # don't fork
-                    "--ipv4only",  # only attempt configuring ipv4
-                    "--waitip=4",  # wait for ipv4 to be configured
-                    "--persistent",  # don't deconfigure when dhcpcd exits
-                    "--noarp",  # don't be slow
+                    "--oneshot",      # get lease then exit
+                    "--nobackground", # don't fork
+                    "--ipv4only",     # only attempt configuring ipv4
+                    "--waitip=4",     # wait for ipv4 to be configured
+                    "--persistent",   # don't deconfigure when dhcpcd exits
+                    "--noarp",        # don't be slow
                     interface,
                 ]
             )
+            if dhcp_log_func is not None:
+                dhcp_log_func(out, err)
         except subp.ProcessExecutionError as error:
             LOG.debug(
                 "dhclient exited with code: %s stderr: %r stdout: %r",
@@ -592,6 +595,7 @@ class Dhcpcd:
                 error.stdout,
             )
             raise NoDHCPLeaseError from error
+
         return self.parse_dhcp_lease_file(interface)
 
     @staticmethod
