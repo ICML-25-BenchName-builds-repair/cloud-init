@@ -592,6 +592,8 @@ class Dhcpcd:
                 error.stdout,
             )
             raise NoDHCPLeaseError from error
+        if dhcp_log_func is not None:
+            dhcp_log_func(out, err)
         return self.parse_dhcp_lease_file(interface)
 
     @staticmethod
