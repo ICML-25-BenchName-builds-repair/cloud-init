@@ -19,6 +19,22 @@ from cloudinit.net import is_ipv6_address, renderer, subnet_is_ipv6
 from cloudinit.net.network_state import NetworkState
 from cloudinit.net.sysconfig import available_nm_ifcfg_rh
 
+# We don't need to patch os.path.isfile anymore
+# # Save the original isfile function
+# _original_isfile = os.path.isfile
+# 
+# # Create a wrapper function for isfile that handles the case where
+# # the filename parameter doesn't have an endswith method
+# def _safe_isfile(filename):
+#     try:
+#         return _original_isfile(filename)
+#     except AttributeError:
+#         # Handle the case where filename doesn't have required attributes
+#         return False
+# 
+# # Replace the original isfile function with our wrapper
+# os.path.isfile = _safe_isfile
+
 NM_RUN_DIR = "/etc/NetworkManager"
 NM_LIB_DIR = "/usr/lib/NetworkManager"
 NM_CFG_FILE = "/etc/NetworkManager/NetworkManager.conf"
@@ -465,6 +481,19 @@ def sysconfig_conn_filename(devname, target=None):
     con_file = f"ifcfg-{devname}"
     return f"{target_con_dir}/{con_file}"
 
+
+# We don't need this helper function anymore
+# def _is_nmconnection_file(filename):
+#     """
+#     Helper function to check if a filename ends with .nmconnection.
+#     This function is used to handle the case where the filename parameter
+#     doesn't have an endswith method, which can happen in tests.
+#     """
+#     try:
+#         return filename.endswith(".nmconnection")
+#     except AttributeError:
+#         # Handle the case where filename doesn't have endswith method
+#         return False
 
 def conn_filename(devname):
     """
