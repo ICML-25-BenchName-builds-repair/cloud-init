@@ -123,7 +123,7 @@ def win_user_profile_dir() -> Optional[PurePath]:
     return win_path_2_wsl(home.rstrip())
 
 
-def machine_id():
+def machine_id() -> Optional[str]:
     """
     Returns the local machine ID value from /etc/machine-id.
     """
