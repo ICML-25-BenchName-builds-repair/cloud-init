@@ -6,7 +6,7 @@ from typing import Dict, Iterable, List, Optional, Type, Union
 from cloudinit import subp, util
 from cloudinit.net.eni import available as eni_available
 from cloudinit.net.netplan import available as netplan_available
-from cloudinit.net.network_manager import available as nm_available
+# Import moved to avoid circular import
 from cloudinit.net.network_state import NetworkState
 from cloudinit.net.networkd import available as networkd_available
 
@@ -106,6 +106,8 @@ class NetworkManagerActivator(NetworkActivator):
     @staticmethod
     def available(target=None) -> bool:
         """Return true if NetworkManager can be used on this system."""
+        # Import here to avoid circular import
+        from cloudinit.net.network_manager import available as nm_available
         return nm_available(target=target)
 
     @staticmethod

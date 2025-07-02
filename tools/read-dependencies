@@ -43,7 +43,7 @@ DISTRO_PKG_TYPE_MAP = {
 MAYBE_RELIABLE_YUM_INSTALL = [
     "sh",
     "-c",
-    """
+    r"""
     error() { echo "$@" 1>&2; }
     configure_repos_for_proxy_use() {
         grep -q "^proxy=" /etc/yum.conf || return 0
