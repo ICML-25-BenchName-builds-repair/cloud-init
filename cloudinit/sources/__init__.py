@@ -19,6 +19,9 @@ from collections import namedtuple
 from enum import Enum, unique
 from typing import Any, Dict, List, Optional, Tuple
 
+# Re-export Optional for use by modules importing from cloudinit.sources
+__all__ = ["Optional"]
+
 from cloudinit import atomic_helper, dmi, importer, net, type_utils
 from cloudinit import user_data as ud
 from cloudinit import util

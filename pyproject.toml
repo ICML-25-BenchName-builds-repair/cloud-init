@@ -60,3 +60,4 @@ ignore = [
 ]
 [tool.ruff.per-file-ignores]
 "cloudinit/cmd/main.py" = ["E402"]
+"tests/unittests/sources/test_wsl.py" = ["F401"]

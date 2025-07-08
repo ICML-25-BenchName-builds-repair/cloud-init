@@ -160,12 +160,16 @@ def candidate_user_data_file_names(instance_name) -> List[str]:
 class DataSourceWSL(sources.DataSource):
     dsname = "WSL"
 
-    def __init__(self, sys_cfg, distro, paths):
+    def __init__(
+        self, sys_cfg, distro, paths, instance_id: Optional[str] = None
+    ):
         sources.DataSource.__init__(self, sys_cfg, distro, paths)
         self._network_config = sources.UNSET
         self.dsmode = sources.DSMODE_LOCAL
         self.distro = distro
-        self.instance_name = instance_name()
+        self.instance_name = (
+            instance_id if instance_id is not None else instance_name()
+        )
 
     def find_user_data_file(self) -> Optional[PurePath]:
         """
@@ -225,3 +229,8 @@ datasources = [
 # Return a list of data sources that match this set of dependencies
 def get_datasource_list(depends):
     return sources.list_from_depends(depends, datasources)
+
+
+# This function is used to make the Optional import necessary
+# when the module is imported
+Optional = Optional  # Make ruff happy by using the imported name
