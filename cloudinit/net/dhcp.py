@@ -584,6 +584,8 @@ class Dhcpcd:
                     interface,
                 ]
             )
+            if dhcp_log_func is not None:
+                dhcp_log_func(out, err)
         except subp.ProcessExecutionError as error:
             LOG.debug(
                 "dhclient exited with code: %s stderr: %r stdout: %r",
