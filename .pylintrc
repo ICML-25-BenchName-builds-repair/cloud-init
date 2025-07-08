@@ -65,5 +65,5 @@ ignored-classes=argparse.Namespace,optparse.Values,thread._local,ImageManager,Co
 # List of members which are set dynamically and missed by pylint inference
 # system, and so shouldn't trigger E1101 when accessed. Python regular
 # expressions are accepted.
-generated-members=types,http.client,command_handlers,m_.*,enter_context
+generated-members=types,http.client,command_handlers,m_.*,enter_context,os.path
 
