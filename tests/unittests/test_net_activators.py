@@ -326,7 +326,7 @@ class TestActivatorsBringDown:
 
 
 class TestNetworkManagerActivatorBringUp:
-    def fake_isfile_no_nmconn(filename):
+    def fake_isfile_no_nmconn(filename):  # pylint: disable=no-self-argument,no-member  # pylint: disable=no-self-argument,no-member  # pylint: disable=no-self-argument
         return False if filename.endswith(".nmconnection") else True
 
     @patch("cloudinit.subp.subp", return_value=("", ""))
