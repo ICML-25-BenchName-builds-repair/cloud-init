@@ -36,7 +36,7 @@ class NetOps:
 
     @staticmethod
     def get_default_route() -> str:
-        pass
+        raise NotImplementedError()
 
     @staticmethod
     def add_addr(interface: str, address: str, broadcast: str):
