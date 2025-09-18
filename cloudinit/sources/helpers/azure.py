@@ -13,7 +13,7 @@ from datetime import datetime
 from errno import ENOENT
 from time import sleep, time
 from typing import TYPE_CHECKING, Callable, List, Optional, TypeVar, Union
-from xml.etree import ElementTree
+import xml.etree.ElementTree as ET
 from xml.sax.saxutils import escape
 
 from cloudinit import distros, subp, temp_utils, url_helper, util, version
@@ -440,8 +440,8 @@ class GoalState:
         self.azure_endpoint_client = azure_endpoint_client
 
         try:
-            self.root = ElementTree.fromstring(unparsed_xml)
-        except ElementTree.ParseError as e:
+            self.root = ET.fromstring(unparsed_xml)
+        except ET.ParseError as e:
             report_diagnostic_event(
                 "Failed to parse GoalState XML: %s" % e,
                 logger_func=LOG.warning,
@@ -574,7 +574,7 @@ class OpenSSLManager:
         """Decrypt the certificates XML document using the our private key;
         return the list of certs and private keys contained in the doc.
         """
-        tag = ElementTree.fromstring(certificates_xml).find(".//Data")
+        tag = ET.fromstring(certificates_xml).find(".//Data")
         certificates_content = tag.text
         lines = [
             b"MIME-Version: 1.0",
@@ -1085,8 +1085,8 @@ class OvfEnvXml:
         :raises BrokenAzureDataSource: if XML is unparseable or invalid.
         """
         try:
-            root = ElementTree.fromstring(ovf_env_xml)
-        except ElementTree.ParseError as e:
+            root = ET.fromstring(ovf_env_xml)
+        except ET.ParseError as e:
             error_str = "Invalid ovf-env.xml: %s" % e
             raise BrokenAzureDataSource(error_str) from e
 
