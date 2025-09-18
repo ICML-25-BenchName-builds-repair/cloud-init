@@ -60,3 +60,4 @@ ignore = [
 ]
 [tool.ruff.per-file-ignores]
 "cloudinit/cmd/main.py" = ["E402"]
+"tests/**/*.py" = ["F401"]  # Allow unused imports in test files
